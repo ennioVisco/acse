@@ -5,3 +5,6 @@
 *.asm
 *.cfg
 *.out
+*.o
+
+/bin
