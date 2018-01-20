@@ -1,5 +1,9 @@
+#ACSE COMPILER
+
 ## DEPENDENCIES
+
 Before installing the compiler, you should install **make/cmake**, **flex** and  **bison**. To do so in Ubuntu you can simply type in the console:
+
 ```
 apt-get install make
 apt-get install cmake
