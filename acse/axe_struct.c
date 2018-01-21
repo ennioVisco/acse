@@ -1,10 +1,10 @@
 /*
  * Andrea Di Biagio
  * Politecnico di Milano, 2007
- * 
+ *
  * axe_struct.c
  * Formal Languages & Compilers Machine, 2007/2008
- * 
+ *
  */
 
 #include "axe_struct.h"
@@ -28,7 +28,7 @@ t_axe_register * alloc_register(int ID, int indirect)
    /* create an instance of `t_axe_register' */
    result = (t_axe_register *)
             _AXE_ALLOC_FUNCTION(sizeof(t_axe_register));
-   
+
    /* check the postconditions */
    if (result == NULL)
       return NULL;
@@ -48,7 +48,7 @@ t_axe_instruction * alloc_instruction(int opcode)
 
    /* create an instance of `t_axe_data' */
    result = (t_axe_instruction *) _AXE_ALLOC_FUNCTION(sizeof(t_axe_instruction));
-   
+
    /* check the postconditions */
    if (result == NULL)
       return NULL;
@@ -74,7 +74,7 @@ t_axe_data * alloc_data(int directiveType, int value, t_axe_label *label)
 
    /* create an instance of `t_axe_data' */
    result = (t_axe_data *) _AXE_ALLOC_FUNCTION(sizeof(t_axe_data));
-   
+
    /* check the postconditions */
    if (result == NULL)
       return NULL;
@@ -98,6 +98,21 @@ t_while_statement create_while_statement()
 
    /* return a new instance of `t_while_statement' */
    return statement;
+}
+
+t_foreach_statement create_foreach_statement(int size)
+{
+    t_foreach_statement statement;
+
+    statement.label_main = NULL;
+    statement.label_every = NULL;
+    statement.label_end = NULL;
+
+    statement.arraySize = size;
+
+    statement.counter = create_expression(0, IMMEDIATE);
+
+    return statement;
 }
 
 t_axe_label * alloc_label(int value)
@@ -176,7 +191,7 @@ void free_Instruction(t_axe_instruction *inst)
    /* preconditions */
    if (inst == NULL)
       return;
-   
+
    /* free memory */
    if (inst->reg_1 != NULL)
       _AXE_FREE_FUNCTION(inst->reg_1);

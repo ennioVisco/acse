@@ -1,10 +1,10 @@
 /*
  * Andrea Di Biagio
  * Politecnico di Milano, 2007
- * 
+ *
  * axe_struct.h
  * Formal Languages & Compilers Machine, 2007/2008
- * 
+ *
  */
 
 #ifndef _AXE_STRUCT_H
@@ -113,6 +113,20 @@ typedef struct t_while_statement
    t_axe_label *label_end;         /* this label points to the instruction
                                     * that follows the while construct */
 } t_while_statement;
+
+typedef struct t_foreach_statement
+{
+    t_axe_label *label_main;
+    t_axe_label *label_every;
+    t_axe_label *label_end;
+
+    int arraySize;
+
+    t_axe_expression counter;
+} t_foreach_statement;
+
+/* create an instance that will mantain infos about a foreach statement */
+extern t_foreach_statement create_foreach_statement (int size);
 
 /* create a label */
 extern t_axe_label * alloc_label(int value);

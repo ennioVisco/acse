@@ -9,11 +9,13 @@ foreach elem in a {
     ...
 } every k do {
     ...
-}
+};
 ```
 ### Constraints
 The construct must check the following things (names refer to previous example):
 
+- The first time it **always** executes the main block.
 - **a** must be an array.
-- **k** must be a number.
+- **k** must be an expression evaluating as a number.
+- Every **k** iterations, it executes the do block instead of the main one.
 - **All** errors should be reported by the compiler.
