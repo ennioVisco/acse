@@ -1,0 +1,10 @@
+int a;
+int b = 5;
+
+read(a);
+
+either b = 7;
+or read(b);
+on a > 9;
+
+write(b);
