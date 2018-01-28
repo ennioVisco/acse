@@ -106,6 +106,7 @@ t_io_infos *file_infos;    /* input and output files used by the compiler */
    t_list *list;
    t_axe_label *label;
    t_while_statement while_stmt;
+   t_dec_loop_statement loop_stmt;
 }
 /*=========================================================================
                                TOKENS
@@ -411,16 +412,17 @@ do_while_statement  : DO
                      }
 ;
 
+/*
 dec_loop_statement :    DEC_LOOP IDENTIFIER BY exp
                         {
-                            /*
                                 1. initialize structure
                                 2. check $2 is positive (else exit)
                                 3. execute code_block
                                 4. decrement $2 by $4
                                 5. check condition (else exit)
-                            */
                         }
+*/
+
 dec_loop_statement  :   DEC_LOOP IDENTIFIER BY exp
                         {
                             /*
@@ -457,17 +459,15 @@ dec_loop_statement  :   DEC_LOOP IDENTIFIER BY exp
                             /*
                                 4. decrement $2 by $4
                             */
-                            t_axe_expression decrement = handle_bin_numeric_op(program, $2, $4, SUB);
+                            int location = get_symbol_location(program, $2, 0);
+                            t_axe_expression exp = create_expression(location, REGISTER);
+                            t_axe_expression decrement = handle_bin_numeric_op(program, exp, $4, SUB);
 
-                            /*
-                            if (decerement.expression_type == IMMEDIATE)
-                               instr = gen_subi_instruction
-                                  (program, location, REG_0, $4.value);
+                            if (decrement.expression_type == IMMEDIATE)
+                               gen_subi_instruction(program, location, REG_0, $4.value);
                             else
-                               instr = gen_sub_instruction
-                                     (program, location, REG_0, $4.value, CG_DIRECT_ALL);
+                               gen_sub_instruction(program, location, REG_0, $4.value, CG_DIRECT_ALL);
 
-                            */
 
 
                             /*

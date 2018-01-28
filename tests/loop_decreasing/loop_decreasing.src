@@ -1,0 +1,10 @@
+int x[100], input, c = 0, s = 100;
+
+loop_decreasing s by c {
+read(input);
+c = c + 5;
+write(c);
+} while (input > 32 && c < 50);
+
+write(input);
+write(s);
