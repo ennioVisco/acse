@@ -1,10 +1,10 @@
 /*
  * Andrea Di Biagio
  * Politecnico di Milano, 2007
- * 
+ *
  * axe_cflow_graph.c
  * Formal Languages & Compilers Machine, 2007/2008
- * 
+ *
  */
 
 #include <assert.h>
@@ -60,7 +60,7 @@ t_list * computeLiveOutVars(t_cflow_Graph *graph, t_basic_block *block)
       cflow_errorcode = CFLOW_GRAPH_UNDEFINED;
       return NULL;
    }
-   
+
    /* initialize `current_elem' */
    current_elem = block->succ;
 
@@ -74,7 +74,7 @@ t_list * computeLiveOutVars(t_cflow_Graph *graph, t_basic_block *block)
       if (current_succ != graph->endingBlock)
       {
          liveINVars = getLiveINVars(current_succ);
-         
+
          /* update the value of `result' */
          result = addListToSet(result
                , liveINVars, NULL, NULL);
@@ -82,7 +82,7 @@ t_list * computeLiveOutVars(t_cflow_Graph *graph, t_basic_block *block)
          /* free the temporary list of live intervals */
          freeList(liveINVars);
       }
-      
+
       current_elem = LNEXT(current_elem);
    }
 
@@ -94,14 +94,14 @@ t_list * getLiveOUTVars(t_basic_block *bblock)
 {
    t_list *last_Element;
    t_cflow_Node *lastNode;
-   
+
    if (bblock == NULL)
       return NULL;
 
    if (bblock->nodes == NULL)
       return NULL;
 
-   
+
    last_Element = getLastElement(bblock->nodes);
    lastNode = (t_cflow_Node *) LDATA(last_Element);
    assert(lastNode != NULL);
@@ -114,7 +114,7 @@ t_list * getLiveOUTVars(t_basic_block *bblock)
 t_list * getLiveINVars(t_basic_block *bblock)
 {
    t_cflow_Node *firstNode;
-   
+
    if (bblock == NULL)
       return NULL;
 
@@ -157,7 +157,7 @@ t_list * addVariables(t_list *set, t_list *elements, int *modified)
    /* update the set of variables */
    set = addListToSet(set, elements
          , compare_CFLOW_Variables, modified);
-   
+
    /* postconditions: return the new list of variables */
    return set;
 }
@@ -209,7 +209,7 @@ int performLivenessOnBlock(t_basic_block *bblock, t_list *out)
 
    /* update the in list */
    cloned_list = cloneList(current_node->out);
-   
+
 #if CFLOW_ALWAYS_LIVEIN_R0 == (1)
    if ((current_node->uses)[0] != NULL && (current_node->uses)[0]->ID != REG_0)
       cloned_list = addVariableToSet
@@ -227,7 +227,7 @@ int performLivenessOnBlock(t_basic_block *bblock, t_list *out)
    if ((current_node->uses)[1] != NULL)
       cloned_list = addVariableToSet
             (cloned_list, (current_node->uses)[1], NULL);
-   
+
    if ((current_node->uses)[2] != NULL)
       cloned_list = addVariableToSet
             (cloned_list, (current_node->uses)[2], NULL);
@@ -243,7 +243,7 @@ int performLivenessOnBlock(t_basic_block *bblock, t_list *out)
    {
       int found = 0;
       int current_use_idx = 0;
-      
+
       do
       {
          if ((current_node->uses)[current_use_idx] != NULL)
@@ -251,21 +251,21 @@ int performLivenessOnBlock(t_basic_block *bblock, t_list *out)
             if ((current_node->uses)[current_use_idx]->ID == current_node->def->ID)
                found = 1;
          }
-         
+
          current_use_idx++;
-         
+
       } while((found == 0) && (current_use_idx < 3));
-      
+
       if (!found)
          cloned_list = removeElement(cloned_list, current_node->def);
    }
-   
+
    current_node->in = addListToSet
          (current_node->in, cloned_list, NULL, &modified);
 
    /* remove the cloned list */
    freeList(cloned_list);
-   
+
    /* set the new value of next_node */
    next_node = current_node;
    current_element = LPREV(current_element);
@@ -277,17 +277,17 @@ int performLivenessOnBlock(t_basic_block *bblock, t_list *out)
 
       /* clone the `in' list of the next_node */
       cloned_list = cloneList(next_node->in);
-      
+
       /* update the out list */
       current_node->out = addListToSet
             (current_node->out, cloned_list, NULL, &modified);
-      
+
       /* remove the cloned list */
       freeList(cloned_list);
 
       /* clone the `in' list of the next_node */
       cloned_list = cloneList(current_node->out);
-      
+
       /* update the in list */
 #if CFLOW_ALWAYS_LIVEIN_R0 == (1)
       if ((current_node->uses)[0] != NULL && (current_node->uses)[0]->ID != REG_0)
@@ -310,7 +310,7 @@ int performLivenessOnBlock(t_basic_block *bblock, t_list *out)
          cloned_list = addVariableToSet
                (cloned_list, (current_node->uses)[2], NULL);
 #endif
-      
+
 #if CFLOW_ALWAYS_LIVEIN_R0 == (1)
       if (current_node->def != NULL && (current_node->def)->ID != REG_0)
 #else
@@ -319,7 +319,7 @@ int performLivenessOnBlock(t_basic_block *bblock, t_list *out)
       {
          int found = 0;
          int current_use_idx = 0;
-      
+
          do
          {
             if ((current_node->uses)[current_use_idx] != NULL)
@@ -331,9 +331,9 @@ int performLivenessOnBlock(t_basic_block *bblock, t_list *out)
                }
             }
             current_use_idx++;
-         
+
          } while((found == 0) && (current_use_idx < 3));
-      
+
          if (!found)
             cloned_list = removeElement(cloned_list, current_node->def);
       }
@@ -343,7 +343,7 @@ int performLivenessOnBlock(t_basic_block *bblock, t_list *out)
 
       /* remove the cloned list */
       freeList(cloned_list);
-      
+
       /* update the loop control informations */
       current_element = LPREV(current_element);
       next_node = current_node;
@@ -396,11 +396,11 @@ int performLivenessIteration(t_cflow_Graph *graph)
 
    /* retrieve the last basic block in the list */
    current_element = getLastElement(graph->blocks);
-   
+
    while(current_element != NULL)
    {
       t_list *live_out_vars;
-      
+
       current_bblock = (t_basic_block *) LDATA(current_element);
       assert(current_bblock != NULL);
 
@@ -452,11 +452,11 @@ t_cflow_var * allocVariable (t_cflow_Graph *graph, int identifier)
 
    /* update the value of result */
    result->ID = identifier;
-   
+
    /* test if a variable with the same identifier was already present */
    elementFound = CustomfindElement
          (graph->cflow_variables, result, compare_CFLOW_Variables);
-   
+
    if (elementFound == NULL)
    {
       /* update the set of variables */
@@ -470,7 +470,7 @@ t_cflow_var * allocVariable (t_cflow_Graph *graph, int identifier)
       assert(result != NULL);
       assert(result->ID == identifier);
    }
-   
+
    /* return a new var identifier */
    return result;
 }
@@ -488,7 +488,7 @@ void setDefUses(t_cflow_Graph *graph, t_cflow_Node *node)
       cflow_errorcode = CFLOW_GRAPH_UNDEFINED;
       return;
    }
-   
+
    if (node == NULL) {
       cflow_errorcode = CFLOW_INVALID_NODE;
       return;
@@ -503,7 +503,7 @@ void setDefUses(t_cflow_Graph *graph, t_cflow_Node *node)
       cflow_errorcode = CFLOW_INVALID_INSTRUCTION;
       return;
    }
-   
+
    /* update the value of `instr' */
    instr = node->instr;
 
@@ -523,7 +523,7 @@ void setDefUses(t_cflow_Graph *graph, t_cflow_Node *node)
       varSource1 = allocVariable(graph, (instr->reg_2)->ID);
    if (instr->reg_3 != NULL)
       varSource2 = allocVariable(graph, (instr->reg_3)->ID);
-   
+
    switch(instr->opcode)
    {
       case LOAD : case AXE_READ : node->def = varDest; break;
@@ -594,7 +594,7 @@ t_basic_block * searchLabel(t_cflow_Graph *graph, t_axe_label *label)
    t_list *current_element;
    t_basic_block *bblock;
    t_cflow_Node *current_node;
-   
+
    /* preconditions: graph should not be a NULL pointer */
    if (graph == NULL){
       cflow_errorcode = CFLOW_GRAPH_UNDEFINED;
@@ -604,10 +604,10 @@ t_basic_block * searchLabel(t_cflow_Graph *graph, t_axe_label *label)
    /* test if we haven't to search for a label */
    if (label == NULL)
       return NULL;
-   
+
    /* initialize `bblock' */
    bblock = NULL;
-   
+
    current_element = graph->blocks;
    while(current_element != NULL)
    {
@@ -656,7 +656,7 @@ int isStartingNode(t_axe_instruction *instr)
 
       return 1;
    }
-   
+
    return 0;
 }
 
@@ -775,7 +775,7 @@ void finalizeGraph(t_cflow_Graph *graph)
 t_basic_block * allocBasicBlock()
 {
    t_basic_block *result;
-   
+
    result = _AXE_ALLOC_FUNCTION(sizeof(t_basic_block));
    if (result == NULL)
    {
@@ -807,7 +807,7 @@ void finalizeBasicBlock(t_basic_block *block)
 
    /* initialize current_element */
    current_element = block->nodes;
-   
+
    while (current_element != NULL)
    {
       /* retrieve the current node */
@@ -821,7 +821,7 @@ void finalizeBasicBlock(t_basic_block *block)
    }
 
    freeList(block->nodes);
-   
+
    /* free the memory associated with this basic block */
    _AXE_FREE_FUNCTION(block);
 }
@@ -852,7 +852,7 @@ t_cflow_Node * allocNode
       cflow_errorcode = CFLOW_GRAPH_UNDEFINED;
       return NULL;
    }
-   
+
    if (instr == NULL)
    {
       cflow_errorcode = CFLOW_INVALID_INSTRUCTION;
@@ -888,7 +888,7 @@ t_cflow_Node * allocNode
     * and live out from the current node */
    result->in = NULL;
    result->out = NULL;
-   
+
    /* return the node */
    return result;
 }
@@ -917,7 +917,7 @@ void setPred(t_basic_block *block, t_basic_block *pred)
 void setSucc(t_basic_block *block, t_basic_block *succ)
 {
    t_list *element_found;
-   
+
    /* preconditions */
    if (block == NULL) {
       cflow_errorcode = CFLOW_BBLOCK_UNDEFINED;
@@ -930,7 +930,7 @@ void setSucc(t_basic_block *block, t_basic_block *succ)
    }
 
    element_found = findElement(block->succ, succ);
-   
+
    /* test if the node is already inserted in the list of successors */
    if (element_found == NULL)
    {
@@ -947,7 +947,7 @@ void insertBlock(t_cflow_Graph *graph, t_basic_block *block)
       cflow_errorcode = CFLOW_GRAPH_UNDEFINED;
       return;
    }
-   
+
    if (block == NULL)
    {
       cflow_errorcode = CFLOW_INVALID_BBLOCK;
@@ -974,14 +974,14 @@ void insertNodeBefore(t_basic_block *block
 {
    int before_node_posn;
    t_list *before_node_elem;
-   
+
    /* preconditions */
    if (block == NULL)
    {
       cflow_errorcode = CFLOW_INVALID_BBLOCK;
       return;
    }
-   
+
    if (  (new_node == NULL)
          || (new_node->instr == NULL)
          || (before_node == NULL) )
@@ -996,7 +996,7 @@ void insertNodeBefore(t_basic_block *block
       cflow_errorcode = CFLOW_INVALID_NODE;
       return;
    }
-   
+
    if (findElement(block->nodes, new_node) != NULL)
    {
       cflow_errorcode = CFLOW_NODE_ALREADY_INSERTED;
@@ -1017,14 +1017,14 @@ void insertNodeAfter(t_basic_block *block
 {
    int after_node_posn;
    t_list *after_node_elem;
-   
+
    /* preconditions */
    if (block == NULL)
    {
       cflow_errorcode = CFLOW_INVALID_BBLOCK;
       return;
    }
-   
+
    if (  (new_node == NULL)
          || (new_node->instr == NULL)
          || (after_node == NULL) )
@@ -1039,7 +1039,7 @@ void insertNodeAfter(t_basic_block *block
       cflow_errorcode = CFLOW_INVALID_NODE;
       return;
    }
-   
+
    if (findElement(block->nodes, new_node) != NULL)
    {
       cflow_errorcode = CFLOW_NODE_ALREADY_INSERTED;
@@ -1062,7 +1062,7 @@ void insertNode(t_basic_block *block, t_cflow_Node *node)
       cflow_errorcode = CFLOW_INVALID_BBLOCK;
       return;
    }
-   
+
    if (node == NULL || node->instr == NULL)
    {
       cflow_errorcode = CFLOW_INVALID_NODE;
@@ -1091,13 +1091,13 @@ t_cflow_Graph * createFlowGraph(t_list *instructions)
 
    /* initialize the global variable `cflow_errorcode' */
    cflow_errorcode = CFLOW_OK;
-   
+
    /* preconditions */
    if (instructions == NULL){
       cflow_errorcode = CFLOW_INVALID_PROGRAM_INFO;
       return NULL;
    }
-   
+
    /* alloc memory for a new control flow graph */
    result = allocGraph();
    if (result == NULL)
@@ -1119,7 +1119,7 @@ t_cflow_Graph * createFlowGraph(t_list *instructions)
          current_element = LNEXT(current_element);
          continue;
       }
-         
+
       /* create a new node for the current basic block */
       current_node = allocNode(result, current_instr);
       if (current_node == NULL){
@@ -1195,7 +1195,7 @@ void updateFlowGraph(t_cflow_Graph *graph)
    t_list *current_element;
    t_basic_block *current_block;
    t_basic_block *successor;
-   
+
    /* preconditions: graph should not be a NULL pointer */
    if (graph == NULL){
       cflow_errorcode = CFLOW_GRAPH_UNDEFINED;
@@ -1210,7 +1210,7 @@ void updateFlowGraph(t_cflow_Graph *graph)
       t_cflow_Node *last_node;
       t_axe_instruction *last_instruction;
       t_basic_block *jumpBlock;
-      
+
       /* retrieve the current block */
       current_block = (t_basic_block *) LDATA(current_element);
       assert(current_block != NULL);
@@ -1219,7 +1219,7 @@ void updateFlowGraph(t_cflow_Graph *graph)
       /* get the last node of the basic block */
       last_element = getLastElement(current_block->nodes);
       assert(last_element != NULL);
-      
+
       last_node = (t_cflow_Node *) LDATA(last_element);
       assert(last_node != NULL);
 
@@ -1241,10 +1241,11 @@ void updateFlowGraph(t_cflow_Graph *graph)
                cflow_errorcode = CFLOW_INVALID_LABEL_FOUND;
                return;
             }
-         
+
             jumpBlock = searchLabel(graph
                   , (last_instruction->address)->labelID);
             if (jumpBlock == NULL) {
+                printGraphInfos(graph, stdin, 1);
                cflow_errorcode = CFLOW_INVALID_LABEL_FOUND;
                return;
             }
@@ -1263,13 +1264,13 @@ void updateFlowGraph(t_cflow_Graph *graph)
          {
             t_basic_block *nextBlock;
             t_list *next_element;
-            
+
             next_element = LNEXT(current_element);
             if (next_element != NULL)
             {
                nextBlock = LDATA(next_element);
                assert(nextBlock != NULL);
-               
+
                setSucc(current_block, nextBlock);
                setPred(nextBlock, current_block);
             }
@@ -1278,7 +1279,7 @@ void updateFlowGraph(t_cflow_Graph *graph)
                setSucc(current_block, graph->endingBlock);
                setPred(graph->endingBlock, current_block);
             }
-         
+
             if (cflow_errorcode != CFLOW_OK)
                return;
          }

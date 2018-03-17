@@ -428,7 +428,6 @@ foreach_statement  : FOREACH IDENTIFIER IN IDENTIFIER
 
                 /* reserve and fix a new label */
                 $1.label_main = assignNewLabel(program);
-                $1.label_end = newLabel(program);
 
                 /* initialize $2 value */
                 int location = get_symbol_location(program, $2, 0);
@@ -496,7 +495,7 @@ foreach_statement  : FOREACH IDENTIFIER IN IDENTIFIER
                 gen_bt_instruction(program, $1.label_main, 0);
 
                 /* label to exit from the loop */
-                assignLabel(program, $1.label_end);
+                $1.label_end = assignNewLabel(program);
              }
 
 return_statement : RETURN
